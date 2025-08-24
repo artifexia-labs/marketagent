@@ -2,7 +2,7 @@
   "name": "frontend_new",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://artifexia-labs.github.io/marketagent",
+  "homepage": "https://justax.space/",
   "dependencies": {
     "@splinetool/react-spline": "^4.1.0",
     "@splinetool/runtime": "^1.10.51",
