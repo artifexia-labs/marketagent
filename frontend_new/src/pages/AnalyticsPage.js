@@ -23,20 +23,20 @@ const AnalyticsPage = () => {
     const { isLoading } = ui;
 
     useEffect(() => {
-        fetchAnalyticsData();
-        fetchInfluenceIndex();
+        if(fetchAnalyticsData) fetchAnalyticsData();
+        if(fetchInfluenceIndex) fetchInfluenceIndex();
     }, [fetchAnalyticsData, fetchInfluenceIndex]);
 
-    // --- ИЗМЕНЕНИЕ: Новая цветовая палитра для графиков ---
-    const chartColors = {
-        primary: 'rgba(158, 82, 255, 0.7)', // --color-accent-purple
+    // --- ИСПРАВЛЕНИЕ ЗДЕСЬ: Оборачиваем объект в useMemo ---
+    const chartColors = useMemo(() => ({
+        primary: 'rgba(158, 82, 255, 0.7)',
         primaryBorder: '#9E52FF',
-        danger: 'rgba(255, 77, 141, 0.8)', // --color-accent-pink
-        warning: 'rgba(255, 206, 86, 0.8)', // Желтый для нейтрального
-        success: 'rgba(0, 231, 255, 0.7)', // --color-accent-cyan
-        text: '#F0F2F5', // --color-text-primary
-        grid: 'rgba(0, 231, 255, 0.2)' // --color-border
-    };
+        danger: 'rgba(255, 77, 141, 0.8)',
+        warning: 'rgba(255, 206, 86, 0.8)',
+        success: 'rgba(0, 231, 255, 0.7)',
+        text: '#F0F2F5',
+        grid: 'rgba(0, 231, 255, 0.2)'
+    }), []); // Пустой массив зависимостей означает, что объект создастся только один раз
 
     const processedData = useMemo(() => {
         if (!analyticsData || !analyticsData.length) {
@@ -67,7 +67,7 @@ const AnalyticsPage = () => {
                 datasets: [{
                     data: Object.values(sentimentCounts),
                     backgroundColor: [chartColors.success, chartColors.danger, chartColors.warning],
-                    borderColor: '#16152B', // --color-panel
+                    borderColor: '#16152B',
                     borderWidth: 2,
                 }]
             },
@@ -85,22 +85,24 @@ const AnalyticsPage = () => {
         };
     }, [analyticsData, chartColors]);
 
-    const chartOptions = {
+    const chartOptions = useMemo(() => ({
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: { position: 'top', labels: { color: chartColors.text, font: { family: "'Inter', sans-serif" } } }
         }
-    };
-    const barChartOptions = { ...chartOptions, indexAxis: 'y', scales: {
+    }), [chartColors.text]);
+
+    const barChartOptions = useMemo(() => ({ ...chartOptions, indexAxis: 'y', scales: {
         y: { ticks: { color: chartColors.text }, grid: { color: chartColors.grid } },
         x: { ticks: { color: chartColors.text }, grid: { color: chartColors.grid } }
-    }};
-    const pieChartOptions = { ...chartOptions, plugins: {
+    }}), [chartOptions, chartColors.text, chartColors.grid]);
+
+    const pieChartOptions = useMemo(() => ({ ...chartOptions, plugins: {
         legend: { position: 'right', labels: { color: chartColors.text, font: { family: "'Inter', sans-serif" } } }
-    }};
+    }}), [chartOptions, chartColors.text]);
     
-    if (isLoading && !analyticsData.length) {
+    if (isLoading && (!analyticsData || !analyticsData.length)) {
         return <div style={{padding: '40px'}}><LoaderIcon/> Loading Analytics Data...</div>
     }
 
@@ -141,7 +143,7 @@ const AnalyticsPage = () => {
                                     <tr><th>Comment</th><th>Tone</th><th>Intent</th></tr>
                                 </thead>
                                 <tbody>
-                                    {analyticsData.slice(0, 5).map(comment => (
+                                    {analyticsData && analyticsData.slice(0, 5).map(comment => (
                                          <tr key={comment.comment_id}><td>{comment.message}</td><td>{comment.tonalita}</td><td>{comment.zamer_uzivatele}</td></tr>
                                     ))}
                                 </tbody>

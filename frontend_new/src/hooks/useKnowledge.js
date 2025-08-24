@@ -1,5 +1,5 @@
 // src/hooks/useKnowledge.js
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
 export const useKnowledge = (session, uiHooks) => {
