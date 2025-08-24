@@ -1,0 +1,53 @@
+/* src/pages/AccountPage.css */
+
+.account-layout {
+  flex-grow: 1;
+  padding: 32px;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.account-panel {
+  width: 100%;
+  max-width: 700px;
+}
+
+.account-info {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 32px;
+}
+
+.account-info p {
+  font-size: 16px;
+}
+
+.account-form h3 {
+  font-family: var(--font-header);
+  font-weight: 500;
+  font-size: 18px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-secondary);
+}
+
+.account-form .input-group {
+  margin-bottom: 20px;
+}
+
+.account-form button {
+  width: 100%;
+  padding: 14px;
+}
+
+.account-message {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--color-accent-cyan);
+}
