@@ -3,20 +3,16 @@
 name: Deploy React App to GitHub Pages
 
 on:
-  # Запускать автоматически при каждом push в ветку main
   push:
     branches:
-      - main
-  # Позволяет запускать этот воркфлоу вручную со страницы Actions
+      - main # Или твоя основная ветка
   workflow_dispatch:
 
-# Настройка прав для GITHUB_TOKEN для деплоя на GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Отмена предыдущих запусков, которые еще не завершились
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -28,19 +24,22 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # Укажи версию Node.js, которую используешь
+          node-version: 18
 
+      # --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ ЗДЕСЬ ---
       - name: Install dependencies
         run: npm install
+        working-directory: ./frontend_new # Указываем, где запускать команду
 
-      - name: Build
+      - name: Build application
         run: npm run build
+        working-directory: ./frontend_new # И здесь тоже
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
@@ -48,7 +47,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: './build' # Папка, которую мы деплоим
+          # Указываем правильный путь к папке build
+          path: './frontend_new/build' 
 
       - name: Deploy to GitHub Pages
         id: deployment
