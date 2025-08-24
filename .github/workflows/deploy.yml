@@ -25,15 +25,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # ОБНОВЛЕНО с v3 до v4
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4 # ОБНОВЛЕНО с v3 до v4
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # --- ИЗМЕНЕНИЕ ТОЛЬКО ЗДЕСЬ ---
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps # <--- ДОБАВИЛИ ЭТОТ ФЛАГ
         working-directory: ./frontend_new
 
       - name: Build application
@@ -41,13 +42,13 @@ jobs:
         working-directory: ./frontend_new
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5 # ОБНОВЛЕНО с v3 до v5
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3 # ОБНОВЛЕНО с v2 до v3 (Главный фикс!)
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './frontend_new/build'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # ОБНОВЛЕНО с v2 до v4
+        uses: actions/deploy-pages@v4
