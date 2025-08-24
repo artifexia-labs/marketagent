@@ -7,19 +7,29 @@ export const useContent = (session, uiHooks) => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [comments, setComments] = useState([]);
 
+  // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
+  // Мы "вытаскиваем" нужные функции из uiHooks, чтобы зависимости были стабильными
+  const { setLoadingAction, setMessage, setIsLoading } = uiHooks;
+
   const fetchPosts = useCallback(async () => {
-    uiHooks.setLoadingAction('Načítání příspěvků...');
+    setLoadingAction('Načítání příspěvků...');
     try {
       const { data, error } = await supabase.functions.invoke('get-facebook-posts');
       if (error || data.error) throw new Error(error?.message || data.error);
       setPosts(data.data || []);
-      uiHooks.setMessage(`Automaticky načteno ${data.data?.length || 0} příspěvků.`);
+      setMessage(`Automaticky načteno ${data.data?.length || 0} příspěvků.`);
     } catch (error) {
-      uiHooks.setMessage(`Chyba při automatickém načítání příspěvků: ${error.message}`);
+      // Важное изменение: выводим более понятное сообщение при блокировке
+      if (error.message.includes('80001')) {
+          setMessage('Ошибка: Facebook временно заблокировал запросы из-за их частоты. Пожалуйста, подождите 15-30 минут и обновите страницу.');
+      } else {
+          setMessage(`Chyba při automatickém načítání příspěvků: ${error.message}`);
+      }
     } finally {
-      uiHooks.setLoadingAction('');
+      setLoadingAction('');
     }
-  }, [uiHooks]);
+    // Теперь зависимости в useCallback стабильны и не будут меняться при каждом рендере
+  }, [setLoadingAction, setMessage]);
 
   useEffect(() => {
     if (session) {
@@ -29,11 +39,11 @@ export const useContent = (session, uiHooks) => {
 
   const fetchComments = useCallback(async (postId, isAutoReplyEnabled) => {
     if (!postId) return;
-    uiHooks.setIsLoading(true);
-    uiHooks.setLoadingAction('Načítání komentářů...');
+    setIsLoading(true);
+    setLoadingAction('Načítání komentářů...');
     setComments([]);
     const loadingMessage = isAutoReplyEnabled ? "Synchronizuji komentáře pro AI..." : "Hledání komentářů bez odpovědi...";
-    uiHooks.setMessage(loadingMessage);
+    setMessage(loadingMessage);
 
     try {
       const { data, error } = await supabase.functions.invoke('get-facebook-comments', { body: { postId } });
@@ -46,21 +56,21 @@ export const useContent = (session, uiHooks) => {
       } else {
           resultMessage += `${data.savedCount || 0} komentářů přidáno do fronty 'Čeká na odpověď'.`;
       }
-      uiHooks.setMessage(resultMessage);
+      setMessage(resultMessage);
 
     } catch (error) {
-      uiHooks.setMessage(`Chyba při načítání komentářů: ${error.message}`);
+      setMessage(`Chyba při načítání komentářů: ${error.message}`);
     } finally {
-      uiHooks.setIsLoading(false);
-      uiHooks.setLoadingAction('');
+      setIsLoading(false);
+      setLoadingAction('');
     }
-  }, [uiHooks]);
+  }, [setIsLoading, setLoadingAction, setMessage]);
 
   const handlePostSelect = useCallback((post, isAutoReplyEnabled) => {
     setSelectedPost(post);
-    uiHooks.setMessage(`Vybrán příspěvek...`);
+    setMessage(`Vybrán příspěvek...`);
     fetchComments(post.id, isAutoReplyEnabled);
-  }, [fetchComments, uiHooks]);
+  }, [fetchComments, setMessage]);
 
   return {
     posts,
