@@ -25,31 +25,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # ОБНОВЛЕНО с v3 до v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # ОБНОВЛЕНО с v3 до v4
         with:
           node-version: 18
 
-      # --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ ЗДЕСЬ ---
       - name: Install dependencies
         run: npm install
-        working-directory: ./frontend_new # Указываем, где запускать команду
+        working-directory: ./frontend_new
 
       - name: Build application
         run: npm run build
-        working-directory: ./frontend_new # И здесь тоже
+        working-directory: ./frontend_new
 
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v5 # ОБНОВЛЕНО с v3 до v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3 # ОБНОВЛЕНО с v2 до v3 (Главный фикс!)
         with:
-          # Указываем правильный путь к папке build
-          path: './frontend_new/build' 
+          path: './frontend_new/build'
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4 # ОБНОВЛЕНО с v2 до v4
