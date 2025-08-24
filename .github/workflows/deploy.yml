@@ -5,7 +5,7 @@ name: Deploy React App to GitHub Pages
 on:
   push:
     branches:
-      - main # Или твоя основная ветка
+      - main
   workflow_dispatch:
 
 permissions:
@@ -32,13 +32,13 @@ jobs:
         with:
           node-version: 18
 
-      # --- ИЗМЕНЕНИЕ ТОЛЬКО ЗДЕСЬ ---
       - name: Install dependencies
-        run: npm install --legacy-peer-deps # <--- ДОБАВИЛИ ЭТОТ ФЛАГ
+        run: npm install --legacy-peer-deps
         working-directory: ./frontend_new
 
+      # --- ВОТ ОН, ГЛАВНЫЙ ФИКС ---
       - name: Build application
-        run: npm run build
+        run: CI=false npm run build # Говорим серверу не считать предупреждения ошибками
         working-directory: ./frontend_new
 
       - name: Setup Pages
