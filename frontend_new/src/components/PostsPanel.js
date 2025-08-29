@@ -1,5 +1,6 @@
 // src/components/PostsPanel.js
 import React from 'react';
+import './PostsPanel.css';
 import { useData } from '../context/DataContext';
 import { PostsIcon, LoaderIcon } from './Icons';
 import PostEmbed from './PostEmbed';

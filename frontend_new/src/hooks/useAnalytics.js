@@ -2,35 +2,44 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '../supabaseClient';
 
-export const useAnalytics = (session, uiHooks) => {
+export const useAnalytics = (session, profile, uiApi) => {
   const [analyticsData, setAnalyticsData] = useState([]);
   const [influenceIndex, setInfluenceIndex] = useState([]);
 
   const fetchAnalyticsData = useCallback(async () => {
-    uiHooks.setIsLoading(true);
-    uiHooks.setMessage("Načítání analytických dat...");
-    const { data, error } = await supabase.from('comment_analytics').select('*, posts(reactions_total)').order('created_at', { ascending: false });
-    if (error) {
-      uiHooks.setMessage(`Chyba při načítání analytiky: ${error.message}`);
-    } else {
-      setAnalyticsData(data);
-      uiHooks.setMessage(`Analytická data pro ${data.length} komentářů načtena.`);
+    // Не запускаем, если нет сессии или профиля с токеном
+    if (!session || !profile?.facebook_token) return;
+
+    uiApi.setIsLoading(true);
+    uiApi.setMessage("Načítání analytických dat...");
+    try {
+        const { data, error } = await supabase.from('comment_analytics').select('*, posts(reactions_total)').order('created_at', { ascending: false });
+        if (error) throw error;
+        setAnalyticsData(data);
+        uiApi.setMessage(`Analytická data pro ${data.length} komentářů načtena.`);
+    } catch (error) {
+        uiApi.setMessage(`Chyba při načítání analytiky: ${error.message}`);
+    } finally {
+        uiApi.setIsLoading(false);
     }
-    uiHooks.setIsLoading(false);
-  }, [uiHooks]);
+  }, [session, profile, uiApi]);
 
   const fetchInfluenceIndex = useCallback(async () => {
-    uiHooks.setIsLoading(true);
-    uiHooks.setMessage("Výpočet indexu vlivu...");
+    // Не запускаем, если нет сессии или профиля с токеном
+    if (!session || !profile?.facebook_token) return;
+
+    uiApi.setIsLoading(true);
+    uiApi.setMessage("Výpočet indexu vlivu...");
     try {
       const { data, error } = await supabase.functions.invoke('calculate-influence-index');
       if (error || data.error) throw new Error(error?.message || data.error);
       setInfluenceIndex(data || []);
     } catch (error) {
-      uiHooks.setMessage(`Chyba při výpočtu indexu vlivu: ${error.message}`);
+      uiApi.setMessage(`Chyba při výpočtu indexu vlivu: ${error.message}`);
+    } finally {
+        uiApi.setIsLoading(false);
     }
-    uiHooks.setIsLoading(false);
-  }, [uiHooks]);
+  }, [session, profile, uiApi]);
 
   return {
     analyticsData,

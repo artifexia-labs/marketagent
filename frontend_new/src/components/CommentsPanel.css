@@ -1,0 +1,23 @@
+/* src/components/CommentsPanel.css */
+.comment-thread-view {
+    padding: 16px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    margin-bottom: 16px;
+}
+
+.comment-thread-view p {
+    line-height: 1.6;
+}
+
+.comment-thread-view strong {
+    color: var(--color-accent-cyan);
+    font-weight: 500;
+}
+
+.comment-reply-view {
+    margin-top: 12px;
+    padding-left: 20px;
+    border-left: 2px solid var(--color-border);
+}

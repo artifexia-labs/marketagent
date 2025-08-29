@@ -1,14 +1,13 @@
 // src/hooks/useContent.js
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 
-export const useContent = (session, uiHooks) => {
+export const useContent = (session, profile, uiHooks) => {
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [comments, setComments] = useState([]);
+  const fetchInitiated = useRef(false);
 
-  // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
-  // Мы "вытаскиваем" нужные функции из uiHooks, чтобы зависимости были стабильными
   const { setLoadingAction, setMessage, setIsLoading } = uiHooks;
 
   const fetchPosts = useCallback(async () => {
@@ -19,20 +18,20 @@ export const useContent = (session, uiHooks) => {
       setPosts(data.data || []);
       setMessage(`Automaticky načteno ${data.data?.length || 0} příspěvků.`);
     } catch (error) {
-      // Важное изменение: выводим более понятное сообщение при блокировке
-      if (error.message.includes('80001')) {
-          setMessage('Ошибка: Facebook временно заблокировал запросы из-за их частоты. Пожалуйста, подождите 15-30 минут и обновите страницу.');
+      if (error.message.includes('Facebook token не найден')) {
+          setMessage('Pro načtení příspěvků propojte účet s Facebookem v nastavení.');
       } else {
-          setMessage(`Chyba při automatickém načítání příspěvků: ${error.message}`);
+          setMessage(`Chyba při načítání příspěvků: ${error.message}`);
       }
     } finally {
       setLoadingAction('');
     }
-    // Теперь зависимости в useCallback стабильны и не будут меняться при каждом рендере
   }, [setLoadingAction, setMessage]);
 
   useEffect(() => {
-    if (session) {
+    // --- ИЗМЕНЕНИЕ: Убираем проверку на facebook_token ---
+    if (session && !fetchInitiated.current) {
+      fetchInitiated.current = true;
       fetchPosts();
     }
   }, [session, fetchPosts]);

@@ -2,7 +2,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-export const useInbox = (session, uiHooks, autoReplyEnabled) => {
+export const useInbox = (session, profile, uiHooks, autoReplyEnabled) => {
   const [inboxItems, setInboxItems] = useState([]);
   const [unansweredItems, setUnansweredItems] = useState([]);
 
@@ -25,14 +25,15 @@ export const useInbox = (session, uiHooks, autoReplyEnabled) => {
   }, []);
 
   useEffect(() => {
+    // --- ИЗМЕНЕНИЕ: Убираем проверку на facebook_token ---
     if (session) {
       fetchInbox();
       fetchUnanswered();
     }
   }, [session, fetchInbox, fetchUnanswered]);
   
-  // Этот useEffect отвечает за запуск автоответчика
   useEffect(() => {
+    // --- ИЗМЕНЕНИЕ: Убираем проверку на facebook_token ---
     if (session && autoReplyEnabled && inboxItems.length > 0) {
       uiHooks.setMessage(`Nalezeno ${inboxItems.length} komentářů k automatickému zpracování...`);
       inboxItems.forEach(item => {

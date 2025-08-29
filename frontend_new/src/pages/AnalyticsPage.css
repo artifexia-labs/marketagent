@@ -85,9 +85,3 @@ td a:hover {
 tbody tr:last-child td {
     border-bottom: none;
 }
-
-/* === ИСПРАВЛЕНИЕ ЗДЕСЬ === */
-.chart-container {
-    position: relative;
-    height: 400px; /* Задаем конкретную высоту для контейнера графика */
-}

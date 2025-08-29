@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { LoaderIcon, CommentsIcon } from './Icons';
 import InboxItemCard from './InboxItemCard';
+import './Inbox.css';
 
 const Inbox = () => {
   const { inbox, ui } = useData();

@@ -1,0 +1,178 @@
+/* src/pages/SettingsPage.css */
+
+.settings-panel details {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    margin-bottom: 24px;
+    background: rgba(0,0,0,0.1);
+}
+
+.settings-panel summary {
+    padding: 16px 20px;
+    font-family: var(--font-header);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-text-secondary);
+}
+.settings-panel details[open] summary {
+    color: var(--color-accent-cyan);
+}
+
+.settings-group {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid var(--color-border);
+}
+
+.toggle-switch-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+    padding: 12px;
+    border-radius: var(--border-radius);
+}
+
+.toggle-switch-label {
+    font-weight: 500;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+.toggle-switch input { display: none; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-text-tertiary);
+  transition: .4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+input:checked + .slider {
+  background-color: var(--color-accent-magenta);
+}
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+.slider.round { border-radius: 34px; }
+.slider.round:before { border-radius: 50%; }
+
+.settings-footer {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+}
+.settings-footer button {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.files-list {
+    list-style: none;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.files-list li {
+    background-color: rgba(0,0,0,0.2);
+    padding: 8px 12px;
+    border-radius: 4px;
+    border-left: 2px solid var(--color-accent-cyan);
+    font-size: 14px;
+}
+/* Добавь это в конец файла src/pages/SettingsPage.css */
+
+.files-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-file-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-file-btn:hover {
+    background-color: rgba(255, 0, 0, 0.2);
+    color: var(--color-error);
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+/* Добавь это в конец файла src/pages/SettingsPage.css */
+
+.facebook-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--color-border);
+}
+
+.facebook-status span {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.facebook-status.connected span {
+    color: var(--color-success);
+}
+
+.facebook-status svg {
+    width: 20px;
+    height: 20px;
+    color: #1877F2; /* Facebook Blue */
+}
+
+.facebook-status.connected svg {
+    color: var(--color-success);
+}
+
+button.danger {
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
+button.danger:hover {
+    background-color: var(--color-error);
+    color: var(--color-text-primary);
+}

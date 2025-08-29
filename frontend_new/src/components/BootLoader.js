@@ -1,5 +1,6 @@
 // src/components/BootLoader.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import './BootLoader.css';
 
 const bootSequence = [
   { text: 'JSTX KERNEL V4.0 INITIALIZING...', delay: 100 },
@@ -20,32 +21,45 @@ const bootSequence = [
 const BootLoader = ({ onBootComplete }) => {
   const [lines, setLines] = useState([]);
   const [caretVisible, setCaretVisible] = useState(true);
-
-  // --- ИСПРАВЛЕНИЕ ЗДЕСЬ ---
-  // Я переписал эту часть, чтобы она была более стабильной.
-  // Вместо того чтобы менять внешнюю переменную, мы передаём
-  // нужный индекс прямо в функцию. Это решает проблему.
+  
+  const onBootCompleteRef = useRef(onBootComplete);
+  
   useEffect(() => {
+    onBootCompleteRef.current = onBootComplete;
+  }, [onBootComplete]);
+
+  useEffect(() => {
+    let isMounted = true;
+    let timeoutId;
+
     const processLine = (index) => {
-      // Проверяем, что мы не вышли за пределы массива
-      if (index < bootSequence.length) {
-        const currentEntry = bootSequence[index];
-        setTimeout(() => {
-          // Добавляем новую строку и вызываем функцию для следующей
+      if (!isMounted || index >= bootSequence.length) {
+        // --- ГЛАВНОЕ ИСПРАВЛЕНИЕ ЗДЕСЬ ---
+        // Проверяем, существует ли функция, прежде чем ее вызывать
+        if(isMounted && typeof onBootCompleteRef.current === 'function') {
+            timeoutId = setTimeout(() => {
+              onBootCompleteRef.current();
+            }, 500);
+        }
+        return;
+      }
+      
+      const currentEntry = bootSequence[index];
+      timeoutId = setTimeout(() => {
+        if (isMounted) {
           setLines(prev => [...prev, currentEntry.text]);
           processLine(index + 1);
-        }, currentEntry.delay);
-      } else {
-        // Если все строки показаны, завершаем загрузку
-        setTimeout(onBootComplete, 500);
-      }
+        }
+      }, currentEntry.delay);
     };
 
-    // Начинаем процесс с самого первого элемента (индекс 0)
     processLine(0);
-  }, [onBootComplete]);
-  // --- КОНЕЦ ИСПРАВЛЕНИЯ ---
 
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
+  }, []); // Пустой массив зависимостей = запустить один раз
 
   useEffect(() => {
     const caretInterval = setInterval(() => {

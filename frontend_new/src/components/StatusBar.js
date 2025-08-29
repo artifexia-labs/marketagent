@@ -1,6 +1,7 @@
 import React from 'react';
 import { useData } from '../context/DataContext'; // Используем хук
 import { LoaderIcon } from './Icons';
+import './StatusBar.css';
 
 const StatusBar = () => {
   const { ui } = useData(); // Получаем данные из контекста
